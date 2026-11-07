@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Lịch Nhà – Ứng dụng theo dõi ngày dương lịch, âm lịch và quản lý các ngày quan trọng trong gia đình Việt Nam." />
+  <meta name="theme-color" content="#c0392b" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f0d0a" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Lịch Nhà" />
+  <title>Lịch Nhà – Lịch Âm Việt Nam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <style>
+/* =============================================
+   LỊCH NHÀ – Design System & Components
+   ============================================= */
+:root {
+  --bg-primary:#faf8f5;--bg-secondary:#fff;--bg-card:#fff;--bg-card-hover:#f7f4ef;
+  --bg-overlay:rgba(0,0,0,.4);--bg-input:#f5f2ed;--bg-tab:#efe9e0;--bg-tab-active:#fff;
+  --text-primary:#1a1208;--text-secondary:#6b5c40;--text-muted:#9c8a6e;--text-on-accent:#fff;
+  --accent:#c0392b;--accent-light:#fdf0ee;--accent-hover:#a93226;
+  --gold:#b8860b;--gold-light:#fdf8e6;--gold-hover:#9a7209;
+  --border:#e6dfd4;--border-light:#f0ebe3;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 16px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --cat-gio:#c0392b;--cat-gio-bg:#fdf0ee;
+  --cat-rang:#8e44ad;--cat-rang-bg:#f8f0fd;
+  --cat-mung:#e67e22;--cat-mung-bg:#fdf5e8;
+  --cat-tet:#c0392b;--cat-tet-bg:#fff0f0;
+  --cat-trung-thu:#f39c12;--cat-trung-thu-bg:#fef9e7;
+  --cat-vu-lan:#8e44ad;--cat-vu-lan-bg:#f8f0fd;
+  --cat-thanh-minh:#27ae60;--cat-thanh-minh-bg:#f0faf5;
+  --cat-doan-ngo:#e74c3c;--cat-doan-ngo-bg:#fff2f1;
+  --cat-giadinh:#2980b9;--cat-giadinh-bg:#edf5fb;
+  --cat-khac:#7f8c8d;--cat-khac-bg:#f5f6fa;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-full:9999px;
+  --t:.2s ease;--ts:.35s ease;
+}
+[data-theme="dark"] {
+  --bg-primary:#0f0d0a;--bg-secondary:#1a1611;--bg-card:#221e18;--bg-card-hover:#2a2520;
+  --bg-overlay:rgba(0,0,0,.6);--bg-input:#2a2520;--bg-tab:#1a1611;--bg-tab-active:#221e18;
+  --text-primary:#f5f0e8;--text-secondary:#c4a882;--text-muted:#8a7660;
+  --accent:#e74c3c;--accent-light:#2d1512;--accent-hover:#c0392b;
+  --gold:#d4a017;--gold-light:#2a2010;--gold-hover:#b8860b;
+  --border:#35302a;--border-light:#2a2520;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 16px rgba(0,0,0,.4);--shadow-lg:0 8px 32px rgba(0,0,0,.5);
+  --cat-gio-bg:#2d1512;--cat-rang-bg:#1e1228;--cat-mung-bg:#2a1a08;--cat-tet-bg:#2d1010;
+  --cat-trung-thu-bg:#2a2008;--cat-vu-lan-bg:#1e1228;--cat-thanh-minh-bg:#0e2018;
+  --cat-doan-ngo-bg:#2d1010;--cat-giadinh-bg:#0c1e2d;--cat-khac-bg:#1a1e20;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.5;min-height:100dvh;transition:background var(--ts),color var(--ts)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* Loading */
+.loading-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-primary);gap:16px;z-index:9999}
+.loading-logo{font-size:64px;animation:pulse 1.5s ease-in-out infinite}
+.loading-screen p{color:var(--text-secondary);font-size:16px}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.7}}
+
+/* Layout */
+#app{display:flex;flex-direction:column;min-height:100dvh}
+.app-container{display:flex;flex-direction:column;max-width:640px;margin:0 auto;min-height:100dvh;width:100%;position:relative}
+
+/* Header */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;position:sticky;top:0;z-index:100;background:var(--bg-primary);border-bottom:1px solid var(--border-light);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.app-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px;color:var(--accent);letter-spacing:-0.3px}
+.app-logo-icon{font-size:22px}
+.header-actions{display:flex;align-items:center;gap:6px}
+.btn-icon{width:36px;height:36px;border:none;background:transparent;color:var(--text-secondary);border-radius:var(--radius-full);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:background var(--t),color var(--t)}
+.btn-icon:hover{background:var(--border);color:var(--text-primary)}
+
+/* Tab Bar */
+.tab-bar{display:flex;background:var(--bg-tab);border-radius:var(--radius-lg);padding:3px;margin:12px 16px 0;position:sticky;top:61px;z-index:99;box-shadow:var(--shadow-sm)}
+.tab-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 6px;border:none;background:transparent;color:var(--text-muted);border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-weight:500;transition:all var(--t);white-space:nowrap;position:relative}
+.tab-btn.active{background:var(--bg-tab-active);color:var(--accent);font-weight:700;box-shadow:var(--shadow-sm)}
+.tab-btn:hover:not(.active){color:var(--text-primary);background:var(--border-light)}
+.tab-icon{font-size:15px}
+.tab-badge{background:var(--accent);color:#fff;border-radius:var(--radius-full);padding:1px 5px;font-size:10px;font-weight:700;line-height:1.4}
+
+/* Content */
+.tab-content{display:none;flex:1;padding:14px 16px}
+.tab-content.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Today Hero */
+.today-hero{background:linear-gradient(135deg,var(--accent) 0%,#7b0000 100%);border-radius:var(--radius-xl);padding:26px 22px 22px;color:#fff;position:relative;overflow:hidden;margin-bottom:14px;box-shadow:0 6px 24px rgba(192,57,43,.35)}
+.today-hero::before{content:'🏮';position:absolute;right:-14px;top:-14px;font-size:110px;opacity:.08;transform:rotate(-12deg);pointer-events:none;user-select:none}
+.today-hero-inner{position:relative;z-index:1}
+.today-dow{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;opacity:.8;margin-bottom:2px}
+.today-day{font-size:84px;font-weight:800;line-height:1;margin:2px 0 4px;letter-spacing:-3px}
+.today-month{font-size:15px;font-weight:600;opacity:.9;letter-spacing:1px;text-transform:uppercase}
+.today-divider{height:1px;background:rgba(255,255,255,.2);margin:14px 0}
+.today-lunar{font-size:14px;font-weight:500;opacity:.92;margin-bottom:3px}
+.today-canchhi{font-size:12px;opacity:.72}
+.today-badges{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.today-badge{background:rgba(255,255,255,.18);backdrop-filter:blur(4px);border-radius:var(--radius-full);padding:4px 12px;font-size:11px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.28)}
+.today-badge.special{background:rgba(255,215,0,.28);border-color:rgba(255,215,0,.4)}
+
+/* Selected Date Info */
+.selected-date-info{background:var(--bg-card);border-radius:var(--radius-lg);padding:14px 16px;border:1px solid var(--border-light);margin-bottom:14px;animation:slideUp .2s ease;display:none}
+.selected-date-info.show{display:block}
+.sdi-solar{font-weight:700;font-size:16px;color:var(--text-primary)}
+.sdi-lunar{font-size:13px;color:var(--text-secondary);margin-top:3px}
+.sdi-canchhi{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Mini Calendar */
+.mini-calendar{background:var(--bg-card);border-radius:var(--radius-lg);padding:14px 14px 10px;border:1px solid var(--border-light);margin-bottom:14px}
+.mini-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mini-cal-title{font-weight:700;font-size:14px;color:var(--text-primary)}
+.mini-cal-nav{display:flex;gap:4px}
+.mini-cal-nav button{width:28px;height:28px;border:none;background:var(--bg-input);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-secondary);font-size:14px;transition:background var(--t)}
+.mini-cal-nav button:hover{background:var(--border)}
+.mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.mini-cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);padding:4px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.mini-cal-day{text-align:center;padding:5px 1px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--t);position:relative}
+.mini-cal-day:hover{background:var(--bg-input)}
+.mini-cal-day .solar{font-size:12px;font-weight:500;color:var(--text-primary);line-height:1.2}
+.mini-cal-day .lunar-tiny{font-size:9px;color:var(--text-muted);line-height:1.2}
+.mini-cal-day.today{background:var(--accent)!important}
+.mini-cal-day.today .solar{color:#fff;font-weight:700}
+.mini-cal-day.today .lunar-tiny{color:rgba(255,255,255,.75)}
+.mini-cal-day.selected:not(.today){background:var(--accent-light)}
+.mini-cal-day.selected:not(.today) .solar{color:var(--accent);font-weight:700}
+.mini-cal-day.other-month .solar{color:var(--text-muted);opacity:.4}
+.mini-cal-day.other-month .lunar-tiny{opacity:.3}
+.mini-cal-day.has-event::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:var(--gold)}
+.mini-cal-day.sunday .solar{color:#e74c3c}
+.mini-cal-day.saturday .solar{color:#2980b9}
+.mini-cal-day.today .solar,.mini-cal-day.today .lunar-tiny{color:#fff!important}
+
+/* Section Header */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:4px}
+.section-title{font-size:15px;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:7px}
+.section-link{font-size:13px;color:var(--accent);cursor:pointer;font-weight:600}
+.section-link:hover{opacity:.8}
+
+/* Event Cards */
+.events-list{display:flex;flex-direction:column;gap:8px}
+.event-card{display:flex;align-items:center;gap:12px;background:var(--bg-card);border-radius:var(--radius-md);padding:13px 14px;border:1px solid var(--border-light);cursor:pointer;transition:all var(--t);position:relative;overflow:hidden;animation:slideUp .3s ease both}
+.event-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3.5px;border-radius:3.5px 0 0 3.5px}
+.event-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.event-card:active{transform:translateY(0)}
+.event-dot{width:42px;height:42px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.event-info{flex:1;min-width:0}
+.event-name{font-weight:700;font-size:14px;color:var(--text-primary);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.event-dates{font-size:11px;color:var(--text-muted)}
+.event-countdown{text-align:right;flex-shrink:0}
+.event-days{font-size:22px;font-weight:800;line-height:1}
+.event-days-label{font-size:10px;color:var(--text-muted)}
+.event-today{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-light);padding:4px 8px;border-radius:var(--radius-full);white-space:nowrap}
+.event-soon{font-size:11px;font-weight:700;color:var(--gold);background:var(--gold-light);padding:4px 8px;border-radius:var(--radius-full);white-space:nowrap}
+
+/* Category-specific event card styles */
+.cat-gio::before{background:var(--cat-gio)}.cat-gio .event-dot{background:var(--cat-gio-bg)}.cat-gio .event-days{color:var(--cat-gio)}
+.cat-rang::before{background:var(--cat-rang)}.cat-rang .event-dot{background:var(--cat-rang-bg)}.cat-rang .event-days{color:var(--cat-rang)}
+.cat-mung::before{background:var(--cat-mung)}.cat-mung .event-dot{background:var(--cat-mung-bg)}.cat-mung .event-days{color:var(--cat-mung)}
+.cat-tet::before{background:var(--cat-tet)}.cat-tet .event-dot{background:var(--cat-tet-bg)}.cat-tet .event-days{color:var(--cat-tet)}
+.cat-trung-thu::before{background:var(--cat-trung-thu)}.cat-trung-thu .event-dot{background:var(--cat-trung-thu-bg)}.cat-trung-thu .event-days{color:var(--cat-trung-thu)}
+.cat-vu-lan::before{background:var(--cat-vu-lan)}.cat-vu-lan .event-dot{background:var(--cat-vu-lan-bg)}.cat-vu-lan .event-days{color:var(--cat-vu-lan)}
+.cat-thanh-minh::before{background:var(--cat-thanh-minh)}.cat-thanh-minh .event-dot{background:var(--cat-thanh-minh-bg)}.cat-thanh-minh .event-days{color:var(--cat-thanh-minh)}
+.cat-doan-ngo::before{background:var(--cat-doan-ngo)}.cat-doan-ngo .event-dot{background:var(--cat-doan-ngo-bg)}.cat-doan-ngo .event-days{color:var(--cat-doan-ngo)}
+.cat-giadinh::before{background:var(--cat-giadinh)}.cat-giadinh .event-dot{background:var(--cat-giadinh-bg)}.cat-giadinh .event-days{color:var(--cat-giadinh)}
+.cat-khac::before{background:var(--cat-khac)}.cat-khac .event-dot{background:var(--cat-khac-bg)}.cat-khac .event-days{color:var(--cat-khac)}
+
+/* Reminder cards */
+.reminders-search{display:flex;gap:8px;margin-bottom:12px}
+.search-input{flex:1;padding:10px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-full);color:var(--text-primary);font-size:14px;outline:none;transition:border-color var(--t)}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text-muted)}
+.filter-row{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{padding:6px 13px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all var(--t)}
+.filter-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.filter-chip:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+.reminder-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:14px;border:1px solid var(--border-light);margin-bottom:8px;transition:box-shadow var(--t);position:relative;overflow:hidden;animation:slideUp .3s ease both}
+.reminder-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3.5px;border-radius:3.5px 0 0 3.5px}
+.reminder-card:hover{box-shadow:var(--shadow-md)}
+.reminder-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.reminder-name{font-weight:700;font-size:14px;color:var(--text-primary);margin-bottom:5px}
+.reminder-actions{display:flex;gap:4px;flex-shrink:0}
+.btn-action{width:30px;height:30px;border:none;border-radius:var(--radius-sm);background:var(--bg-input);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--t)}
+.btn-action:hover{background:var(--border);color:var(--text-primary)}
+.btn-action.delete:hover{background:#fdf0ee;color:#e74c3c}
+.reminder-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.reminder-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--radius-full);font-size:11px;font-weight:600}
+.reminder-date-row{font-size:12px;color:var(--text-muted);line-height:1.5}
+.reminder-note{font-size:12px;color:var(--text-muted);margin-top:4px;font-style:italic}
+.reminder-repeat{font-size:11px;color:var(--gold);font-weight:600}
+
+.tag-gio{background:var(--cat-gio-bg);color:var(--cat-gio)}
+.tag-rang{background:var(--cat-rang-bg);color:var(--cat-rang)}
+.tag-mung{background:var(--cat-mung-bg);color:var(--cat-mung)}
+.tag-tet{background:var(--cat-tet-bg);color:var(--cat-tet)}
+.tag-trung-thu{background:var(--cat-trung-thu-bg);color:var(--cat-trung-thu)}
+.tag-vu-lan{background:var(--cat-vu-lan-bg);color:var(--cat-vu-lan)}
+.tag-thanh-minh{background:var(--cat-thanh-minh-bg);color:var(--cat-thanh-minh)}
+.tag-doan-ngo{background:var(--cat-doan-ngo-bg);color:var(--cat-doan-ngo)}
+.tag-giadinh{background:var(--cat-giadinh-bg);color:var(--cat-giadinh)}
+.tag-khac{background:var(--cat-khac-bg);color:var(--cat-khac)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.empty-state-icon{font-size:52px;margin-bottom:14px;opacity:.6}
+.empty-state-title{font-size:17px;font-weight:700;margin-bottom:7px;color:var(--text-secondary)}
+.empty-state-desc{font-size:14px;line-height:1.6}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:20px;width:54px;height:54px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-full);font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(192,57,43,.4);transition:all var(--t);z-index:200}
+.fab:hover{background:var(--accent-hover);transform:scale(1.08)}
+.fab:active{transform:scale(.95)}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:var(--bg-overlay);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--ts);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.modal-backdrop.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg-card);border-radius:var(--radius-xl) var(--radius-xl) 0 0;padding:0 0 env(safe-area-inset-bottom,0);width:100%;max-width:640px;max-height:92dvh;overflow-y:auto;transform:translateY(100%);transition:transform var(--ts);-webkit-overflow-scrolling:touch}
+.modal-backdrop.open .modal{transform:translateY(0)}
+.modal-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:10px auto 0}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-light);position:sticky;top:0;background:var(--bg-card);z-index:1}
+.modal-title{font-size:17px;font-weight:700;color:var(--text-primary)}
+.modal-close{width:34px;height:34px;border:none;background:var(--bg-input);border-radius:var(--radius-full);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background var(--t)}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:18px}
+.modal-footer{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--border-light)}
+.modal-footer .btn{flex:1}
+
+/* Form */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:11px 13px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:14px;outline:none;transition:border-color var(--t);-webkit-appearance:none;appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);background:var(--bg-secondary)}
+.form-textarea{resize:vertical;min-height:76px}
+.form-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b5c40' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px}
+.form-converted{padding:10px 13px;background:var(--gold-light);border-radius:var(--radius-md);border:1px solid var(--gold);font-size:13px;color:var(--gold-hover);font-weight:500;margin-top:8px;display:none}
+.form-converted.show{display:block}
+.form-toggle{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--bg-input);border-radius:var(--radius-md);cursor:pointer;border:1.5px solid var(--border);transition:border-color var(--t)}
+.form-toggle:hover{border-color:var(--text-muted)}
+.form-toggle-label{font-size:14px;font-weight:500;color:var(--text-primary)}
+.toggle-switch{width:42px;height:23px;border-radius:12px;background:var(--border);position:relative;transition:background var(--t);flex-shrink:0}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform var(--t);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on::after{transform:translateX(19px)}
+.select-group{display:flex;gap:7px;flex-wrap:wrap}
+.select-opt{padding:7px 14px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--t)}
+.select-opt.active{background:var(--gold);border-color:var(--gold);color:#fff}
+.select-opt:hover:not(.active){border-color:var(--text-muted);color:var(--text-primary)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 18px;border-radius:var(--radius-md);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all var(--t);white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg-input);color:var(--text-primary);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold-hover)}
+.btn-danger{background:#fdf0ee;color:#e74c3c}
+.btn-danger:hover{background:#e74c3c;color:#fff}
+.btn-sm{padding:7px 13px;font-size:12px}
+.btn-full{width:100%}
+
+/* Config */
+.config-section{margin-bottom:22px}
+.config-section-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;padding-left:2px}
+.config-card{background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border-light);overflow:hidden}
+.config-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid var(--border-light);transition:background var(--t)}
+.config-item:last-child{border-bottom:none}
+.config-item:hover{background:var(--bg-card-hover)}
+.config-item-left{flex:1;min-width:0}
+.config-item-label{font-size:14px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:7px;margin-bottom:2px}
+.config-item-desc{font-size:12px;color:var(--text-muted)}
+.theme-selector{display:flex;gap:6px;flex-wrap:wrap}
+.theme-btn{padding:6px 12px;border-radius:var(--radius-full);border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t)}
+.theme-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.config-select{padding:6px 10px;border-radius:var(--radius-sm);background:var(--bg-input);border:1.5px solid var(--border);color:var(--text-primary);font-size:13px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none}
+.config-select:focus{border-color:var(--accent)}
+
+/* Share section */
+.share-section{background:linear-gradient(135deg,var(--gold-light),var(--accent-light));border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border-light)}
+.share-title{font-size:15px;font-weight:700;margin-bottom:5px;color:var(--text-primary)}
+.share-desc{font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5}
+.share-url{background:var(--bg-input);border-radius:var(--radius-md);padding:9px 12px;font-size:11px;color:var(--text-muted);font-family:monospace;margin-bottom:10px;word-break:break-all;border:1px solid var(--border)}
+.share-buttons{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Detail modal */
+.detail-hero{background:var(--accent-light);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;text-align:center;border:1px solid var(--border-light)}
+.detail-countdown{font-size:52px;font-weight:800;color:var(--accent);line-height:1}
+.detail-countdown-label{font-size:14px;color:var(--text-secondary);margin-top:4px}
+.detail-dates-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.detail-date-box{background:var(--bg-card);border-radius:var(--radius-md);padding:11px;border:1px solid var(--border-light);text-align:left}
+.detail-date-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:4px}
+.detail-date-value{font-size:14px;font-weight:700;color:var(--text-primary)}
+.detail-date-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.detail-section-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.detail-info-box{font-size:13px;color:var(--text-secondary);line-height:1.6;padding:12px;background:var(--bg-input);border-radius:var(--radius-md);margin-bottom:12px}
+.detail-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+
+/* Toast */
+.toast{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--text-primary);color:var(--bg-primary);padding:9px 18px;border-radius:var(--radius-full);font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all var(--t);white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);text-overflow:ellipsis;overflow:hidden}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Notification toggle button */
+.btn-notify{width:30px;height:30px;border:none;border-radius:var(--radius-sm);background:var(--bg-input);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--t)}
+.btn-notify:hover{background:var(--border);color:var(--text-primary)}
+.btn-notify.on{background:var(--gold-light);color:var(--gold)}
+.btn-notify.on:hover{background:var(--gold);color:#fff}
+
+/* Telegram config */
+.tg-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:600}
+.tg-status.connected{background:#e8f5e9;color:#2e7d32}
+.tg-status.disconnected{background:#fdf0ee;color:#e74c3c}
+[data-theme="dark"] .tg-status.connected{background:#1b3a1b;color:#66bb6a}
+[data-theme="dark"] .tg-status.disconnected{background:#3a1515;color:#ef5350}
+.tg-test-btn{margin-top:8px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Responsive */
+@media(min-width:640px){
+  .app-header{padding:16px 22px 12px}
+  .tab-bar{margin:14px 22px 0}
+  .tab-content{padding:16px 22px}
+  .today-hero{padding:30px 26px 24px}
+  .today-day{font-size:96px}
+  .fab{bottom:30px;right:28px}
+}
+
+/* Spacer */
+.spacer{height:80px}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="loading-screen">
+    <div class="loading-logo">🏮</div>
+    <p>Đang tải Lịch Nhà...</p>
+  </div>
+</div>
+<div class="toast" id="global-toast"></div>
+
+<script>
+'use strict';
+// ============================================================
+// VIETNAMESE LUNAR CALENDAR – Ho Ngoc Duc's Algorithm (UTC+7)
+// ============================================================
+const PI = Math.PI;
+const TZ = 7;
+
+function jdFromDate(dd,mm,yy){
+  const a=Math.floor((14-mm)/12),y=yy+4800-a,m=mm+12*a-3;
+  let jd=dd+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+  if(jd<2299161)jd=dd+Math.floor((153*m+2)/5)+365*y+Math.floor(y/4)-32083;
+  return jd;
+}
+function jdToDate(jd){
+  let a,b,c;
+  if(jd>2299160){a=jd+32044;b=Math.floor((4*a+3)/146097);c=a-Math.floor(b*146097/4);}
+  else{b=0;c=jd+32082;}
+  const d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);
+  return[e-Math.floor((153*m+2)/5)+1,m+3-12*Math.floor(m/10),b*100+d-4800+Math.floor(m/10)];
+}
+function newMoon(k){
+  const T=k/1236.85,T2=T*T,T3=T2*T,dr=PI/180;
+  let Jd=2415020.75933+29.53058868*k+0.0001178*T2-0.000000155*T3;
+  Jd+=0.00033*Math.sin((166.56+132.87*T-0.009173*T2)*dr);
+  const M=359.2242+29.10535608*k-0.0000333*T2-0.00000347*T3;
+  const Mpr=306.0253+385.81691806*k+0.0107306*T2+0.00001236*T3;
+  const F=21.2964+390.67050646*k-0.0016528*T2-0.00000239*T3;
+  let C=(0.1734-0.000393*T)*Math.sin(M*dr)+0.0021*Math.sin(2*M*dr);
+  C-=0.4068*Math.sin(Mpr*dr)-0.0161*Math.sin(2*Mpr*dr)+0.0004*Math.sin(3*Mpr*dr);
+  C+=0.0104*Math.sin(2*F*dr)-0.0051*Math.sin((M+Mpr)*dr)-0.0074*Math.sin((M-Mpr)*dr);
+  C+=0.0004*Math.sin((2*F+M)*dr)-0.0004*Math.sin((2*F-M)*dr)-0.0006*Math.sin((2*F+Mpr)*dr);
+  C+=0.001*Math.sin((2*F-Mpr)*dr)+0.0005*Math.sin((M+2*Mpr)*dr);
+  const dt=T<-11?0.001+0.000839*T+0.0002261*T2-0.00000845*T3-0.000000081*T*T3:-0.000278+0.000265*T+0.000262*T2;
+  return Jd+C-dt;
+}
+function sunLng(jdn){
+  const T=(jdn-2451545)/36525,T2=T*T,dr=PI/180;
+  const M=357.5291+35999.0503*T-0.0001559*T2-0.00000048*T*T2;
+  const L0=280.46646+36000.76983*T+0.0003032*T2;
+  const DL=(1.9146-0.004817*T-0.000014*T2)*Math.sin(M*dr)+(0.019993-0.000101*T)*Math.sin(2*M*dr)+0.00029*Math.sin(3*M*dr);
+  let L=(L0+DL)*dr;L-=PI*2*Math.floor(L/(PI*2));return L;
+}
+function getSunLng(dayNum,tz){return Math.floor(sunLng(dayNum-0.5-tz/24)/PI*6);}
+function getNMDay(k,tz){return Math.floor(newMoon(k)+0.5+tz/24);}
+function getLM11(yy,tz){
+  const off=jdFromDate(31,12,yy)-2415021,k=Math.floor(off/29.530588853);
+  let nm=getNMDay(k,tz);
+  if(getSunLng(nm,tz)>=9)nm=getNMDay(k-1,tz);
+  return nm;
+}
+function getLeapOff(a11,tz){
+  const k=Math.floor((a11-2415021.076998695)/29.530588853+0.5);
+  let last=0,i=1,arc=getSunLng(getNMDay(k+i,tz),tz);
+  do{last=arc;i++;arc=getSunLng(getNMDay(k+i,tz),tz);}while(arc!==last&&i<14);
+  return i-1;
+}
+function solar2Lunar(dd,mm,yy,tz=TZ){
+  const jd=jdFromDate(dd,mm,yy),k=Math.floor((jd-2415021.076998695)/29.530588853);
+  let ms=getNMDay(k+1,tz);if(ms>jd)ms=getNMDay(k,tz);
+  let a11=getLM11(yy,tz),b11=a11,ly;
+  if(a11>=ms){ly=yy;a11=getLM11(yy-1,tz);}else{ly=yy+1;b11=getLM11(yy+1,tz);}
+  const ld=jd-ms+1,diff=Math.floor((ms-a11)/29);
+  let leap=false,lm=diff+11;
+  if(b11-a11>365){const lo=getLeapOff(a11,tz);if(diff>=lo){lm=diff+10;if(diff===lo)leap=true;}}
+  if(lm>12)lm-=12;if(lm>=11&&diff<4)ly-=1;
+  return{day:ld,month:lm,year:ly,leap,jd};
+}
+function lunar2Solar(ld,lm,ly,leap=false,tz=TZ){
+  let a11,b11;
+  if(lm<11){a11=getLM11(ly-1,tz);b11=getLM11(ly,tz);}
+  else{a11=getLM11(ly,tz);b11=getLM11(ly+1,tz);}
+  const k=Math.floor(0.5+(a11-2415021.076998695)/29.530588853);
+  let off=lm-11;if(off<0)off+=12;
+  if(b11-a11>365){
+    const lo=getLeapOff(a11,tz);let lm2=lo-2;if(lm2<0)lm2+=12;
+    if(leap&&lm!==lm2)return[0,0,0];
+    else if(leap||off>=lo)off+=1;
+  }
+  return jdToDate(getNMDay(k+off,tz)+ld-1);
+}
+
+const CAN=['Giáp','Ất','Bính','Đinh','Mậu','Kỷ','Canh','Tân','Nhâm','Quý'];
+const CHI=['Tý','Sửu','Dần','Mão','Thìn','Tị','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'];
+const ANIMALS=['Chuột','Trâu','Hổ','Mèo','Rồng','Rắn','Ngựa','Dê','Khỉ','Gà','Chó','Heo'];
+
+function canChi(y){return CAN[(y+6)%10]+' '+CHI[(y+8)%12];}
+function dayCanChi(jd){return CAN[(jd+9)%10]+' '+CHI[(jd+1)%12];}
+function animal(y){return ANIMALS[(y+8)%12];}
+
+function todayVN(){
+  const now=new Date(),vn=new Date(now.getTime()+TZ*3600000);
+  return new Date(Date.UTC(vn.getUTCFullYear(),vn.getUTCMonth(),vn.getUTCDate()));
+}
+function lunarToday(){
+  const t=todayVN();return solar2Lunar(t.getUTCDate(),t.getUTCMonth()+1,t.getUTCFullYear());
+}
+function nextSolar(ld,lm,leap=false){
+  const t=todayVN(),cy=t.getUTCFullYear();
+  for(let yo=0;yo<=2;yo++){
+    const s=lunar2Solar(ld,lm,cy+yo,leap);
+    if(s[0]===0)continue;
+    const sd=new Date(Date.UTC(s[2],s[1]-1,s[0]));
+    if(sd>=t)return sd;
+  }
+  const s=lunar2Solar(ld,lm,cy+1,leap);
+  return s[0]?new Date(Date.UTC(s[2],s[1]-1,s[0])):new Date(Date.UTC(cy+1,lm-1,ld));
+}
+function daysUntil(date){
+  return Math.ceil((date.getTime()-todayVN().getTime())/(864e5));
+}
+function fmtSolar(d){return`${d.getUTCDate()}/${d.getUTCMonth()+1}/${d.getUTCFullYear()}`;}
+
+const DOWS=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+const MONTHS=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+
+// ============================================================
+// APP STATE
+// ============================================================
+const SK='lichNha_v2';
+const DEFS=[
+  {id:'d-tet',name:'Tết Nguyên Đán',cat:'tet',ld:1,lm:1,leap:false,repeat:true,note:'Năm mới âm lịch 🎊',isDef:true},
+  {id:'d-rang1',name:'Rằm tháng Giêng',cat:'rang',ld:15,lm:1,leap:false,repeat:true,note:'Rằm đầu năm – Tết Thượng Nguyên 🌕',isDef:true},
+  {id:'d-than-tai',name:'Vía Thần Tài',cat:'rang',ld:10,lm:1,leap:false,repeat:true,note:'Cúng Thần Tài mùng 10 🪙',isDef:true},
+  {id:'d-thanh-minh',name:'Tiết Thanh Minh',cat:'thanh-minh',ld:3,lm:3,leap:false,repeat:true,note:'Tảo mộ tổ tiên 🌿',isDef:true},
+  {id:'d-doan-ngo',name:'Tết Đoan Ngọ',cat:'doan-ngo',ld:5,lm:5,leap:false,repeat:true,note:'Giết sâu bọ mùng 5 tháng 5 🍑',isDef:true},
+  {id:'d-vu-lan',name:'Lễ Vu Lan',cat:'vu-lan',ld:15,lm:7,leap:false,repeat:true,note:'Mùa báo hiếu – Rằm tháng 7 🌸',isDef:true},
+  {id:'d-trung-thu',name:'Tết Trung Thu',cat:'trung-thu',ld:15,lm:8,leap:false,repeat:true,note:'Trăng rằm tháng 8 🥮',isDef:true},
+  {id:'d-ong-tao',name:'Ông Táo về Trời',cat:'rang',ld:23,lm:12,leap:false,repeat:true,note:'Cúng ông Công ông Táo 🍜',isDef:true},
+  {id:'d-mung1',name:'Mùng 1 âm lịch',cat:'mung',ld:1,lm:null,repeat:true,note:'Đầu tháng âm lịch 🕯️',isDef:true,everyMonth:true},
+  {id:'d-rang',name:'Rằm âm lịch',cat:'rang',ld:15,lm:null,repeat:true,note:'Ngày trăng rằm hàng tháng 🌕',isDef:true,everyMonth:true},
+];
+
+function defaultState(){return{reminders:[...DEFS.map(d=>({...d,notify:true}))],settings:{theme:'light',showCanChi:true,showDefs:true,eventCount:7,weekStart:'mon',tgBotToken:'',tgChatId:'',tgEnabled:false,tgRemindDays:[0,1,3]}};}
+
+let S=null;
+try{const raw=localStorage.getItem(SK);if(raw)S=JSON.parse(raw);}catch(e){}
+if(!S)S=defaultState();
+// Ensure defaults exist
+DEFS.forEach(def=>{if(!S.reminders.find(r=>r.id===def.id))S.reminders.unshift({...def,notify:true});});
+// Ensure notify field exists on all reminders
+S.reminders.forEach(r=>{if(r.notify===undefined)r.notify=true;});
+// Ensure telegram settings exist
+if(!S.settings.tgBotToken)S.settings.tgBotToken='';
+if(!S.settings.tgChatId)S.settings.tgChatId='';
+if(S.settings.tgEnabled===undefined)S.settings.tgEnabled=false;
+if(!S.settings.tgRemindDays)S.settings.tgRemindDays=[0,1,3];
+
+function save(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
+
+// ============================================================
+// CATEGORIES
+// ============================================================
+const CATS={
+  gio:{label:'Giỗ',icon:'🪔',css:'cat-gio',tag:'tag-gio'},
+  rang:{label:'Rằm / Lễ',icon:'🌕',css:'cat-rang',tag:'tag-rang'},
+  mung:{label:'Mùng 1',icon:'🌑',css:'cat-mung',tag:'tag-mung'},
+  tet:{label:'Tết',icon:'🎊',css:'cat-tet',tag:'tag-tet'},
+  'trung-thu':{label:'Trung Thu',icon:'🥮',css:'cat-trung-thu',tag:'tag-trung-thu'},
+  'vu-lan':{label:'Vu Lan',icon:'🌸',css:'cat-vu-lan',tag:'tag-vu-lan'},
+  'thanh-minh':{label:'Thanh Minh',icon:'🌿',css:'cat-thanh-minh',tag:'tag-thanh-minh'},
+  'doan-ngo':{label:'Đoan Ngọ',icon:'🍑',css:'cat-doan-ngo',tag:'tag-doan-ngo'},
+  giadinh:{label:'Gia đình',icon:'👨‍👩‍👧‍👦',css:'cat-giadinh',tag:'tag-giadinh'},
+  khac:{label:'Khác',icon:'📌',css:'cat-khac',tag:'tag-khac'},
+};
+
+// ============================================================
+// COMPUTED EVENTS
+// ============================================================
+function computeNext(r){
+  if(r.everyMonth){
+    const t=todayVN(),cy=t.getUTCFullYear(),cm=t.getUTCMonth()+1;
+    const lt=solar2Lunar(t.getUTCDate(),cm,cy);
+    for(let o=0;o<=13;o++){
+      let lm=lt.month+o,ly=lt.year;
+      while(lm>12){lm-=12;ly++;}
+      const s=lunar2Solar(r.ld,lm,ly,false);
+      if(s[0]===0)continue;
+      const sd=new Date(Date.UTC(s[2],s[1]-1,s[0]));
+      if(sd>=t)return sd;
+    }
+    return null;
+  }
+  if(r.calType==='solar'){
+    const t=todayVN(),cy=t.getUTCFullYear();
+    for(let yo=0;yo<=1;yo++){
+      const d=new Date(Date.UTC(cy+yo,r.sm-1,r.sd));
+      if(d>=t)return d;
+    }
+    return new Date(Date.UTC(cy+1,r.sm-1,r.sd));
+  }
+  return nextSolar(r.ld,r.lm,r.leap||false);
+}
+
+function enriched(){
+  return S.reminders
+    .filter(r=>r.isDef?S.settings.showDefs:true)
+    .map(r=>{
+      const nd=computeNext(r);
+      const du=nd?daysUntil(nd):9999;
+      const nl=nd?solar2Lunar(nd.getUTCDate(),nd.getUTCMonth()+1,nd.getUTCFullYear()):null;
+      return{...r,nextDate:nd,daysUntil:du,nextLunar:nl};
+    })
+    .sort((a,b)=>a.daysUntil-b.daysUntil);
+}
+
+// ============================================================
+// UI STATE
+// ============================================================
+let activeTab='dashboard';
+let filterCat='all';
+let searchQ='';
+let calViewDate=new Date(todayVN());
+let selDate=null;
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg,ms=2500){
+  const t=document.getElementById('global-toast');
+  if(!t)return;t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function applyTheme(th){
+  const html=document.documentElement;
+  const dark=th==='system'?window.matchMedia('(prefers-color-scheme: dark)').matches:th==='dark';
+  html.setAttribute('data-theme',dark?'dark':'light');
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.th===th));
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function catTag(cat){
+  const c=CATS[cat]||CATS.khac;
+  return`<span class="reminder-tag ${c.tag}">${c.icon} ${c.label}</span>`;
+}
+
+function eventCard(ev,i){
+  const c=CATS[ev.cat]||CATS.khac;
+  const du=ev.daysUntil,nd=ev.nextDate,nl=ev.nextLunar;
+  const ss=nd?fmtSolar(nd):'—';
+  const ls=nl?`${nl.day}/${nl.month}${nl.leap?' nhuận':''}`:'—';
+  const cdEl=du===0?`<div class="event-today">Hôm nay!</div>`:
+    du===1?`<div class="event-soon">Ngày mai</div>`:
+    du<=7?`<div class="event-days" style="color:var(--gold)">${du}</div><div class="event-days-label">ngày</div>`:
+    `<div class="event-days">${du}</div><div class="event-days-label">ngày</div>`;
+  return`<div class="event-card ${c.css}" onclick="showDetail('${ev.id}')" style="animation-delay:${i*.05}s">
+    <div class="event-dot">${c.icon}</div>
+    <div class="event-info">
+      <div class="event-name">${ev.name}</div>
+      <div class="event-dates">☀️ ${ss} &nbsp;🌙 ${ls}</div>
+    </div>
+    <div class="event-countdown">${cdEl}</div>
+  </div>`;
+}
+
+function reminderCard(r,i){
+  const c=CATS[r.cat]||CATS.khac;
+  const ev=enriched().find(e=>e.id===r.id)||r;
+  const nd=ev.nextDate,du=ev.daysUntil;
+  const lStr=r.everyMonth?`Mùng ${r.ld} hàng tháng`:
+    r.calType==='solar'?`${r.sd}/${r.sm} dương lịch`:
+    r.lm?`${r.ld}/${r.lm}${r.leap?' nhuận':''} âm lịch`:
+    `Ngày ${r.ld} âm lịch`;
+  const nss=nd?fmtSolar(nd):'—';
+  const dlbl=du===0?'<strong style="color:var(--accent)">🎉 Hôm nay!</strong>':
+    du>0?`Còn <strong>${du}</strong> ngày`:
+    '<span style="color:var(--text-muted)">Đã qua</span>';
+  return`<div class="reminder-card ${c.css}" style="animation-delay:${i*.04}s">
+    <div class="reminder-header">
+      <div>
+        <div class="reminder-name">${c.icon} ${r.name}</div>
+        <div class="reminder-meta">
+          ${catTag(r.cat)}
+          ${r.repeat?'<span class="reminder-repeat">🔄 Hàng năm</span>':''}
+          ${r.isDef?'<span class="reminder-tag tag-khac">📌 Mặc định</span>':''}
+        </div>
+      </div>
+      <div class="reminder-actions">
+        <button class="btn-notify${r.notify!==false?' on':''}" onclick="toggleNotify('${r.id}');event.stopPropagation()" title="${r.notify!==false?'Tắt thông báo Telegram':'Bật thông báo Telegram'}">${r.notify!==false?'🔔':'🔕'}</button>
+        ${!r.isDef?`<button class="btn-action" onclick="openEdit('${r.id}');event.stopPropagation()" title="Sửa">✏️</button>`:''}
+        ${!r.isDef?`<button class="btn-action delete" onclick="delR('${r.id}');event.stopPropagation()" title="Xóa">🗑️</button>`:''}
+      </div>
+    </div>
+    <div class="reminder-date-row">🌙 ${lStr} &nbsp;|&nbsp; ☀️ Kế tiếp: ${nss} &nbsp;|&nbsp; ${dlbl}</div>
+    ${r.note?`<div class="reminder-note">${r.note}</div>`:''}
+  </div>`;
+}
+
+// ============================================================
+// MINI CALENDAR
+// ============================================================
+function buildCal(){
+  const vy=calViewDate.getUTCFullYear(),vm=calViewDate.getUTCMonth();
+  const today=todayVN();
+  const ev=enriched();
+  const evDays=new Set();
+  ev.forEach(e=>{if(e.nextDate&&e.nextDate.getUTCFullYear()===vy&&e.nextDate.getUTCMonth()===vm)evDays.add(e.nextDate.getUTCDate());});
+
+  const fd=new Date(Date.UTC(vy,vm,1)).getUTCDay();
+  const dim=new Date(Date.UTC(vy,vm+1,0)).getUTCDate();
+  const dipm=new Date(Date.UTC(vy,vm,0)).getUTCDate();
+  const ws=S.settings.weekStart==='sun'?0:1;
+  const dows=ws===1?['T2','T3','T4','T5','T6','T7','CN']:['CN','T2','T3','T4','T5','T6','T7'];
+  const start=(fd-ws+7)%7;
+
+  let cells=[];
+  for(let i=start-1;i>=0;i--){
+    const d=dipm-i,pm=vm===0?12:vm,py=vm===0?vy-1:vy;
+    const l=solar2Lunar(d,pm,py);
+    cells.push({d,m:vm-1,y:vy,other:true,ld:l.day,lm:l.month});
+  }
+  for(let d=1;d<=dim;d++){
+    const l=solar2Lunar(d,vm+1,vy);
+    cells.push({d,m:vm,y:vy,other:false,ld:l.day,lm:l.month});
+  }
+  const rem=42-cells.length;
+  for(let d=1;d<=rem;d++){
+    const nm=vm===11?1:vm+2,ny=vm===11?vy+1:vy;
+    const l=solar2Lunar(d,nm,ny);
+    cells.push({d,m:vm+1,y:vy,other:true,ld:l.day,lm:l.month});
+  }
+
+  const dowsH=dows.map(d=>`<div class="mini-cal-dow">${d}</div>`).join('');
+  const cellsH=cells.map((c,ci)=>{
+    const isTd=!c.other&&c.d===today.getUTCDate()&&vm===today.getUTCMonth()&&vy===today.getUTCFullYear();
+    const hasEv=!c.other&&evDays.has(c.d);
+    const isSel=selDate&&c.d===selDate.getUTCDate()&&c.m===selDate.getUTCMonth()&&c.y===selDate.getUTCFullYear();
+    const doi=(ws+ci)%7;const isSun=doi===0,isSat=doi===6;
+    return`<div class="mini-cal-day${c.other?' other-month':''}${isTd?' today':''}${isSel&&!isTd?' selected':''}${hasEv?' has-event':''}${isSun?' sunday':''}${isSat?' saturday':''}" onclick="selCal(${c.y},${c.m},${c.d})">
+      <div class="solar">${c.d}</div>
+      <div class="lunar-tiny">${c.ld===1?`${c.ld}/${c.lm}`:c.ld}</div>
+    </div>`;
+  }).join('');
+
+  return`<div class="mini-calendar" id="mini-cal">
+    <div class="mini-cal-header">
+      <div class="mini-cal-title">${MONTHS[vm]} ${vy}</div>
+      <div class="mini-cal-nav">
+        <button onclick="navCal(-1)">‹</button>
+        <button onclick="navCal(0)" title="Về hôm nay" style="font-size:11px;font-weight:700">Nay</button>
+        <button onclick="navCal(1)">›</button>
+      </div>
+    </div>
+    <div class="mini-cal-grid">${dowsH}${cellsH}</div>
+  </div>`;
+}
+
+// ============================================================
+// RENDER TABS
+// ============================================================
+function renderDash(){
+  const t=todayVN(),lt=lunarToday();
+  const badges=[];
+  if(lt.day===1)badges.push({txt:'Mùng 1 âm lịch',sp:false});
+  if(lt.day===15)badges.push({txt:'Rằm âm lịch',sp:true});
+  if(lt.day===30||lt.day===29)badges.push({txt:'Cuối tháng âm',sp:false});
+
+  const ev=enriched().filter(e=>e.daysUntil>=0).slice(0,S.settings.eventCount||7);
+  const selInfo=selDate?()=>{
+    const sl=solar2Lunar(selDate.getUTCDate(),selDate.getUTCMonth()+1,selDate.getUTCFullYear());
+    const cc=S.settings.showCanChi?` | Ngày ${dayCanChi(sl.jd)}`:'';
+    const dow=DOWS[selDate.getUTCDay()];
+    return`<div class="sdi-solar">${dow}, ${fmtSolar(selDate)}</div>
+      <div class="sdi-lunar">🌙 Âm: ${sl.day} tháng ${sl.month}${sl.leap?' nhuận':''} năm ${canChi(sl.year)}</div>
+      ${S.settings.showCanChi?`<div class="sdi-canchhi">🐉 Ngày ${dayCanChi(sl.jd)} | ${animal(sl.year)}</div>`:''}`;
+  }:null;
+
+  return`
+    <div class="today-hero">
+      <div class="today-hero-inner">
+        <div class="today-dow">${DOWS[t.getUTCDay()]}</div>
+        <div class="today-day">${t.getUTCDate()}</div>
+        <div class="today-month">${MONTHS[t.getUTCMonth()]}, ${t.getUTCFullYear()}</div>
+        <div class="today-divider"></div>
+        <div class="today-lunar">🌙 Âm lịch: ${lt.day} tháng ${lt.month}${lt.leap?' nhuận':''} năm ${canChi(lt.year)}</div>
+        ${S.settings.showCanChi?`<div class="today-canchhi">🐉 Con giáp: ${animal(lt.year)} &nbsp;|&nbsp; Ngày ${dayCanChi(lt.jd)}</div>`:''}
+        ${badges.length?`<div class="today-badges">${badges.map(b=>`<span class="today-badge${b.sp?' special':''}">${b.txt}</span>`).join('')}</div>`:''}
+      </div>
+    </div>
+    ${buildCal()}
+    <div class="selected-date-info${selDate?' show':''}" id="sdi">
+      ${selDate?selInfo():''}
+    </div>
+    <div class="section-header">
+      <div class="section-title">🔔 Sắp tới</div>
+      <div class="section-link" onclick="switchTab('reminders')">Xem tất cả →</div>
+    </div>
+    <div class="events-list">
+      ${ev.length?ev.map((e,i)=>eventCard(e,i)).join(''):`<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-title">Không có sự kiện</div><div class="empty-state-desc">Nhấn + để thêm ngày quan trọng</div></div>`}
+    </div>
+    <div class="spacer"></div>`;
+}
+
+function renderReminders(){
+  const ev=enriched();
+  let fl=ev;
+  if(filterCat!=='all')fl=fl.filter(r=>r.cat===filterCat);
+  if(searchQ){const q=searchQ.toLowerCase();fl=fl.filter(r=>r.name.toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q));}
+
+  const filters=[{id:'all',label:'Tất cả'},...Object.entries(CATS).map(([id,c])=>({id,label:c.label}))];
+  return`
+    <div class="reminders-search">
+      <input type="search" class="search-input" placeholder="🔍  Tìm kiếm..." value="${searchQ.replace(/"/g,'&quot;')}" oninput="doSearch(this.value)" />
+    </div>
+    <div class="filter-row">
+      ${filters.map(f=>`<button class="filter-chip${filterCat===f.id?' active':''}" onclick="setFilter('${f.id}')">${f.label}</button>`).join('')}
+    </div>
+    <div id="rl">
+      ${fl.length?fl.map((r,i)=>reminderCard(r,i)).join(''):`<div class="empty-state"><div class="empty-state-icon">${searchQ?'🔍':'🗒️'}</div><div class="empty-state-title">${searchQ?'Không tìm thấy':'Chưa có nhắc nhở'}</div><div class="empty-state-desc">${searchQ?`Không có kết quả cho "${searchQ}"`:'Nhấn + để thêm ngày quan trọng cho gia đình'}</div></div>`}
+    </div>
+    <div class="spacer"></div>`;
+}
+
+function renderConfig(){
+  const s=S.settings,url=location.href;
+  return`
+    <div class="config-section">
+      <div class="config-section-title">Giao diện</div>
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🎨 Chủ đề màu sắc</div>
+            <div class="config-item-desc">Chọn giao diện sáng, tối hoặc theo thiết bị</div>
+          </div>
+          <div class="theme-selector">
+            <button class="theme-btn${s.theme==='light'?' active':''}" data-th="light" onclick="setTheme('light')">☀️ Sáng</button>
+            <button class="theme-btn${s.theme==='dark'?' active':''}" data-th="dark" onclick="setTheme('dark')">🌙 Tối</button>
+            <button class="theme-btn${s.theme==='system'?' active':''}" data-th="system" onclick="setTheme('system')">⚙️ Hệ thống</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">Hiển thị</div>
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🐉 Can Chi & Địa Chi</div>
+            <div class="config-item-desc">Hiển thị thông tin Can Chi, con giáp trên dashboard</div>
+          </div>
+          <div class="toggle-switch${s.showCanChi?' on':''}" onclick="toggleS('showCanChi')"></div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🎉 Lễ mặc định Việt Nam</div>
+            <div class="config-item-desc">Tết, Rằm, Mùng 1, Vu Lan, Trung Thu...</div>
+          </div>
+          <div class="toggle-switch${s.showDefs?' on':''}" onclick="toggleS('showDefs')"></div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">📅 Số sự kiện Dashboard</div>
+            <div class="config-item-desc">Số lượng sự kiện sắp tới hiển thị</div>
+          </div>
+          <select class="config-select" onchange="setS('eventCount',parseInt(this.value));renderApp()">
+            ${[3,5,7,10,15].map(n=>`<option value="${n}"${s.eventCount===n?' selected':''}>${n} sự kiện</option>`).join('')}
+          </select>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">📆 Ngày bắt đầu tuần</div>
+          </div>
+          <div class="select-group">
+            <button class="select-opt${s.weekStart==='mon'?' active':''}" onclick="setS('weekStart','mon');renderApp()">Thứ 2</button>
+            <button class="select-opt${s.weekStart==='sun'?' active':''}" onclick="setS('weekStart','sun');renderApp()">Chủ Nhật</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">Thông báo Telegram</div>
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">📬 Bật thông báo Telegram</div>
+            <div class="config-item-desc">Gửi nhắc nhở qua Telegram Bot khi tới ngày sự kiện</div>
+          </div>
+          <div class="toggle-switch${s.tgEnabled?' on':''}" onclick="toggleS('tgEnabled')"></div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🤖 Bot Token</div>
+            <div class="config-item-desc">Token từ @BotFather trên Telegram</div>
+          </div>
+        </div>
+        <div class="config-item" style="padding-top:0">
+          <input type="text" class="form-input" id="tg-token" placeholder="123456:ABC-DEF..." value="${s.tgBotToken||''}" onchange="setS('tgBotToken',this.value);save()" style="font-size:12px" />
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">💬 Chat ID</div>
+            <div class="config-item-desc">ID chat cá nhân hoặc nhóm nhận thông báo</div>
+          </div>
+        </div>
+        <div class="config-item" style="padding-top:0">
+          <input type="text" class="form-input" id="tg-chatid" placeholder="-100123456789" value="${s.tgChatId||''}" onchange="setS('tgChatId',this.value);save()" style="font-size:12px" />
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">⏰ Nhắc trước (ngày)</div>
+            <div class="config-item-desc">Chọn số ngày nhắc trước sự kiện</div>
+          </div>
+          <div class="select-group">
+            ${[0,1,2,3,5,7].map(d=>`<button class="select-opt${(s.tgRemindDays||[0,1,3]).includes(d)?' active':''}" onclick="toggleRemindDay(${d})">${d===0?'Đúng ngày':d+' ngày'}</button>`).join('')}
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🔗 Trạng thái</div>
+            <div class="config-item-desc">
+              ${s.tgBotToken&&s.tgChatId?'<span class="tg-status connected">✅ Đã cấu hình</span>':'<span class="tg-status disconnected">⚠️ Chưa cấu hình</span>'}
+            </div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="testTelegram()">📤 Gửi thử</button>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🚀 Kiểm tra nhắc nhở</div>
+            <div class="config-item-desc">Quét và gửi thông báo cho sự kiện hôm nay/sắp tới</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="checkAndSendReminders()">Gửi ngay</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">Chia sẻ ứng dụng</div>
+      <div class="share-section">
+        <div class="share-title">🔗 Chia sẻ Lịch Nhà</div>
+        <div class="share-desc">Chia sẻ ứng dụng để người thân cùng tra cứu lịch âm dương Việt Nam. Nhắc nhở cá nhân được lưu riêng trên thiết bị của bạn.</div>
+        <div class="share-url">${url}</div>
+        <div class="share-buttons">
+          <button class="btn btn-secondary btn-sm" onclick="copyLink()">📋 Copy link</button>
+          ${navigator.share?`<button class="btn btn-gold btn-sm" onclick="doShare()">📤 Chia sẻ</button>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="config-section">
+      <div class="config-section-title">Dữ liệu</div>
+      <div class="config-card">
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">🔄 Khôi phục mặc định</div>
+            <div class="config-item-desc">Xóa nhắc nhở cá nhân, giữ lễ mặc định</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="resetR()">Xóa</button>
+        </div>
+        <div class="config-item">
+          <div class="config-item-left">
+            <div class="config-item-label">ℹ️ Phiên bản</div>
+            <div class="config-item-desc">Lịch Nhà v2.0 – Lịch Âm Dương Việt Nam</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>`;
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function formModal(r=null){
+  const cats=Object.entries(CATS).map(([id,c])=>`<option value="${id}"${r?.cat===id?' selected':''}>${c.icon} ${c.label}</option>`).join('');
+  const days=Array.from({length:30},(_,i)=>i+1).map(d=>`<option value="${d}"${r?.ld===d?' selected':''}>${d}</option>`).join('');
+  const months=Array.from({length:12},(_,i)=>i+1).map(m=>`<option value="${m}"${r?.lm===m?' selected':''}>Tháng ${m}</option>`).join('');
+  const isLunar=!r?.calType||r?.calType==='lunar';
+  return`<div class="modal-backdrop" id="fm" onclick="if(event.target.id==='fm')closeModal('fm')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">${r?'✏️ Sửa nhắc nhở':'➕ Thêm nhắc nhở'}</div>
+        <button class="modal-close" onclick="closeModal('fm')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Tên sự kiện *</label>
+          <input type="text" class="form-input" id="fn" placeholder="Ví dụ: Giỗ Nội, Sinh nhật Bé..." value="${r?.name||''}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phân loại</label>
+          <select class="form-select" id="fc">${cats}</select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loại lịch</label>
+          <div class="select-group">
+            <button class="select-opt${isLunar?' active':''}" id="bl" onclick="swCal('lunar')">🌙 Âm lịch</button>
+            <button class="select-opt${!isLunar?' active':''}" id="bs" onclick="swCal('solar')">☀️ Dương lịch</button>
+          </div>
+          <input type="hidden" id="fct" value="${r?.calType||'lunar'}" />
+        </div>
+        <div id="lf">
+          <div class="form-group">
+            <label class="form-label">Ngày âm lịch *</label>
+            <div class="form-row">
+              <select class="form-select" id="fld" onchange="updConv()"><option value="">-- Chọn ngày --</option>${days}</select>
+              <select class="form-select" id="flm" onchange="updConv()"><option value="">-- Chọn tháng --</option>${months}</select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-toggle" onclick="tgLeap()">
+              <span class="form-toggle-label">Tháng nhuận</span>
+              <div class="toggle-switch${r?.leap?' on':''}" id="lt"></div>
+            </div>
+            <input type="hidden" id="fl2" value="${r?.leap?'true':'false'}" />
+            <div class="form-hint">Chỉ bật nếu ngày âm lịch đó thuộc tháng nhuận</div>
+          </div>
+          <div class="form-converted" id="fconv"></div>
+        </div>
+        <div id="sf" style="display:none">
+          <div class="form-group">
+            <label class="form-label">Ngày dương lịch *</label>
+            <div class="form-row">
+              <select class="form-select" id="fsd"><option value="">-- Chọn ngày --</option>${Array.from({length:31},(_,i)=>i+1).map(d=>`<option value="${d}"${r?.sd===d?' selected':''}>${d}</option>`).join('')}</select>
+              <select class="form-select" id="fsm"><option value="">-- Chọn tháng --</option>${Array.from({length:12},(_,i)=>i+1).map(m=>`<option value="${m}"${r?.sm===m?' selected':''}>Tháng ${m}</option>`).join('')}</select>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-toggle" onclick="tgRepeat()">
+            <span class="form-toggle-label">🔄 Lặp lại hàng năm</span>
+            <div class="toggle-switch${r?.repeat!==false?' on':''}" id="rt"></div>
+          </div>
+          <input type="hidden" id="fr" value="${r?.repeat!==false?'true':'false'}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ghi chú</label>
+          <textarea class="form-textarea" id="fno" placeholder="Thêm ghi chú tùy ý...">${r?.note||''}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('fm')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveR('${r?.id||''}')">💾 Lưu</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function detailModal(ev){
+  const c=CATS[ev.cat]||CATS.khac;
+  const du=ev.daysUntil,nd=ev.nextDate,nl=ev.nextLunar;
+  const isToday=du===0;
+  const nss=nd?fmtSolar(nd):'—';
+  const dow=nd?DOWS[nd.getUTCDay()]:'';
+  const nlStr=nl?`${nl.day} tháng ${nl.month}${nl.leap?' nhuận':''} năm ${canChi(nl.year)}`:'—';
+  const ndcc=nl?dayCanChi(nl.jd):'';
+  const lStr=ev.everyMonth?`Mùng ${ev.ld} hàng tháng`:ev.calType==='solar'?`${ev.sd}/${ev.sm} dương lịch`:ev.lm?`${ev.ld}/${ev.lm}${ev.leap?' nhuận':''} âm lịch`:`Ngày ${ev.ld} âm lịch`;
+  return`<div class="modal-backdrop" id="dm" onclick="if(event.target.id==='dm')closeModal('dm')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">${c.icon} ${ev.name}</div>
+        <button class="modal-close" onclick="closeModal('dm')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-hero">
+          <div class="detail-countdown">${isToday?'🎉':du<0?'—':du}</div>
+          <div class="detail-countdown-label">${isToday?'Hôm nay là ngày này!':du===1?'Ngày mai':du>0?`ngày nữa`:'Đã qua'}</div>
+          <div class="detail-dates-grid">
+            <div class="detail-date-box">
+              <div class="detail-date-label">☀️ Dương lịch</div>
+              <div class="detail-date-value">${nss}</div>
+              <div class="detail-date-sub">${dow}</div>
+            </div>
+            <div class="detail-date-box">
+              <div class="detail-date-label">🌙 Âm lịch</div>
+              <div class="detail-date-value">${nlStr}</div>
+              ${S.settings.showCanChi&&ndcc?`<div class="detail-date-sub">Ngày ${ndcc}</div>`:''}
+            </div>
+          </div>
+        </div>
+        <div class="detail-tags">
+          ${catTag(ev.cat)}
+          ${ev.repeat?'<span class="reminder-tag tag-khac">🔄 Hàng năm</span>':''}
+          ${ev.isDef?'<span class="reminder-tag tag-khac">📌 Mặc định</span>':''}
+        </div>
+        <div class="detail-section-label">Lịch nhắc</div>
+        <div class="detail-info-box" style="margin-bottom:12px">${lStr}</div>
+        ${ev.note?`<div class="detail-section-label">Ghi chú</div><div class="detail-info-box">${ev.note}</div>`:''}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('dm')">Đóng</button>
+        ${!ev.isDef?`<button class="btn btn-primary" onclick="closeModal('dm');openEdit('${ev.id}')">✏️ Sửa</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// RENDER APP
+// ============================================================
+function renderApp(){
+  const ev=enriched();
+  const todayCount=ev.filter(e=>e.daysUntil===0).length;
+  document.getElementById('app').innerHTML=`
+    <div class="app-container">
+      <header class="app-header">
+        <div class="app-logo"><span class="app-logo-icon">🏮</span>Lịch Nhà</div>
+        <div class="header-actions">
+          <button class="btn-icon" onclick="qToggle()" title="Chuyển chủ đề">${document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙'}</button>
+        </div>
+      </header>
+      <nav class="tab-bar">
+        <button class="tab-btn${activeTab==='dashboard'?' active':''}" onclick="switchTab('dashboard')">
+          <span class="tab-icon">🏠</span> Dashboard
+        </button>
+        <button class="tab-btn${activeTab==='reminders'?' active':''}" onclick="switchTab('reminders')">
+          <span class="tab-icon">🔔</span> Nhắc nhở
+          ${todayCount>0?`<span class="tab-badge">${todayCount}</span>`:''}
+        </button>
+        <button class="tab-btn${activeTab==='config'?' active':''}" onclick="switchTab('config')">
+          <span class="tab-icon">⚙️</span> Cấu hình
+        </button>
+      </nav>
+      <main>
+        <div class="tab-content${activeTab==='dashboard'?' active':''}" id="t-d">${activeTab==='dashboard'?renderDash():''}</div>
+        <div class="tab-content${activeTab==='reminders'?' active':''}" id="t-r">${activeTab==='reminders'?renderReminders():''}</div>
+        <div class="tab-content${activeTab==='config'?' active':''}" id="t-c">${activeTab==='config'?renderConfig():''}</div>
+      </main>
+      <button class="fab" onclick="openAdd()" title="Thêm nhắc nhở">+</button>
+    </div>`;
+}
+
+// ============================================================
+// ACTIONS
+// ============================================================
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['dashboard','reminders','config'][i]===tab));
+  const tabs={dashboard:'t-d',reminders:'t-r',config:'t-c'};
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  const el=document.getElementById(tabs[tab]);
+  if(el){
+    el.classList.add('active');
+    if(!el.innerHTML.trim()||tab==='config'){
+      el.innerHTML=tab==='dashboard'?renderDash():tab==='reminders'?renderReminders():renderConfig();
+    }
+  }
+  window.scrollTo(0,0);
+}
+
+function openAdd(){
+  closeAllM();
+  document.body.insertAdjacentHTML('beforeend',formModal());
+  setTimeout(()=>{const m=document.getElementById('fm');if(m){m.classList.add('open');document.getElementById('fn')?.focus();}},10);
+  updConv();
+}
+function openEdit(id){
+  const r=S.reminders.find(r=>r.id===id);if(!r)return;
+  closeAllM();
+  document.body.insertAdjacentHTML('beforeend',formModal(r));
+  setTimeout(()=>{document.getElementById('fm')?.classList.add('open');},10);
+  updConv();
+}
+function showDetail(id){
+  const ev=enriched().find(e=>e.id===id);if(!ev)return;
+  closeAllM();
+  document.body.insertAdjacentHTML('beforeend',detailModal(ev));
+  setTimeout(()=>document.getElementById('dm')?.classList.add('open'),10);
+}
+function closeModal(id){
+  const m=document.getElementById(id);
+  if(m){m.classList.remove('open');setTimeout(()=>m.remove(),400);}
+}
+function closeAllM(){
+  document.querySelectorAll('.modal-backdrop').forEach(m=>{m.classList.remove('open');setTimeout(()=>m.remove(),400);});
+}
+
+function swCal(t){
+  document.getElementById('fct').value=t;
+  document.getElementById('lf').style.display=t==='lunar'?'':'none';
+  document.getElementById('sf').style.display=t==='solar'?'':'none';
+  document.getElementById('bl').classList.toggle('active',t==='lunar');
+  document.getElementById('bs').classList.toggle('active',t==='solar');
+}
+function tgLeap(){
+  const i=document.getElementById('fl2'),tg=document.getElementById('lt');
+  const v=i.value==='true';i.value=(!v).toString();tg.classList.toggle('on',!v);updConv();
+}
+function tgRepeat(){
+  const i=document.getElementById('fr'),tg=document.getElementById('rt');
+  const v=i.value==='true';i.value=(!v).toString();tg.classList.toggle('on',!v);
+}
+function updConv(){
+  const d=parseInt(document.getElementById('fld')?.value);
+  const m=parseInt(document.getElementById('flm')?.value);
+  const leap=document.getElementById('fl2')?.value==='true';
+  const el=document.getElementById('fconv');if(!el)return;
+  if(d&&m){
+    const y=todayVN().getUTCFullYear();
+    const s=lunar2Solar(d,m,y,leap);
+    el.textContent=s[0]?`☀️ Năm ${y}: ${s[0]}/${s[1]}/${s[2]} dương lịch`:'Không có tháng nhuận này trong năm nay';
+    el.classList.add('show');
+  }else el.classList.remove('show');
+}
+
+function saveR(eid){
+  const name=(document.getElementById('fn')?.value||'').trim();
+  const cat=document.getElementById('fc')?.value||'khac';
+  const ct=document.getElementById('fct')?.value||'lunar';
+  const note=(document.getElementById('fno')?.value||'').trim();
+  const repeat=document.getElementById('fr')?.value==='true';
+  if(!name){toast('⚠️ Vui lòng nhập tên sự kiện');return;}
+  const r={id:eid||`u${Date.now()}`,name,cat,calType:ct,note,repeat,isDef:false};
+  if(ct==='lunar'){
+    const d=parseInt(document.getElementById('fld')?.value),m=parseInt(document.getElementById('flm')?.value);
+    if(!d||!m){toast('⚠️ Vui lòng chọn ngày và tháng âm lịch');return;}
+    r.ld=d;r.lm=m;r.leap=document.getElementById('fl2')?.value==='true';
+  }else{
+    const d=parseInt(document.getElementById('fsd')?.value),m=parseInt(document.getElementById('fsm')?.value);
+    if(!d||!m){toast('⚠️ Vui lòng chọn ngày và tháng dương lịch');return;}
+    r.sd=d;r.sm=m;
+  }
+  if(eid){const idx=S.reminders.findIndex(x=>x.id===eid);if(idx!==-1)S.reminders[idx]=r;}
+  else S.reminders.push(r);
+  save();closeAllM();
+  const tab=document.getElementById('t-r');if(tab)tab.innerHTML=renderReminders();
+  const dashTab=document.getElementById('t-d');if(dashTab&&activeTab==='dashboard')dashTab.innerHTML=renderDash();
+  renderApp();
+  toast(eid?'✅ Đã cập nhật nhắc nhở':'✅ Đã thêm nhắc nhở mới');
+}
+
+function delR(id){
+  if(!confirm('Xóa nhắc nhở này?'))return;
+  S.reminders=S.reminders.filter(r=>r.id!==id);save();
+  const rl=document.getElementById('rl');
+  if(rl){const ev=enriched();let fl=ev;if(filterCat!=='all')fl=fl.filter(r=>r.cat===filterCat);if(searchQ){const q=searchQ.toLowerCase();fl=fl.filter(r=>r.name.toLowerCase().includes(q));}rl.innerHTML=fl.length?fl.map((r,i)=>reminderCard(r,i)).join(''):`<div class="empty-state"><div class="empty-state-icon">🗒️</div><div class="empty-state-title">Chưa có nhắc nhở</div><div class="empty-state-desc">Nhấn + để thêm</div></div>`;}
+  renderApp();
+  toast('🗑️ Đã xóa nhắc nhở');
+}
+
+function doSearch(v){
+  searchQ=v;
+  const rl=document.getElementById('rl');if(!rl)return;
+  let fl=enriched();if(filterCat!=='all')fl=fl.filter(r=>r.cat===filterCat);
+  if(v){const q=v.toLowerCase();fl=fl.filter(r=>r.name.toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q));}
+  rl.innerHTML=fl.length?fl.map((r,i)=>reminderCard(r,i)).join(''):`<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-title">Không tìm thấy</div><div class="empty-state-desc">Không có kết quả cho "${v}"</div></div>`;
+}
+
+function setFilter(f){
+  filterCat=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>{
+    const match=f==='all'?c.textContent.trim()==='Tất cả':CATS[f]&&c.textContent.trim().endsWith(CATS[f].label);
+    c.classList.toggle('active',match);
+  });
+  doSearch(searchQ);
+}
+
+function navCal(dir){
+  if(dir===0){calViewDate=new Date(todayVN());selDate=null;}
+  else calViewDate=new Date(Date.UTC(calViewDate.getUTCFullYear(),calViewDate.getUTCMonth()+dir,1));
+  const old=document.getElementById('mini-cal');
+  if(old){const tmp=document.createElement('div');tmp.innerHTML=buildCal();old.replaceWith(tmp.firstChild);}
+  const sdi=document.getElementById('sdi');
+  if(sdi){sdi.classList.toggle('show',!!selDate);if(selDate)sdi.innerHTML=getSDI();}
+}
+
+function getSDI(){
+  if(!selDate)return'';
+  const sl=solar2Lunar(selDate.getUTCDate(),selDate.getUTCMonth()+1,selDate.getUTCFullYear());
+  return`<div class="sdi-solar">${DOWS[selDate.getUTCDay()]}, ${fmtSolar(selDate)}</div>
+    <div class="sdi-lunar">🌙 Âm: ${sl.day} tháng ${sl.month}${sl.leap?' nhuận':''} năm ${canChi(sl.year)}</div>
+    ${S.settings.showCanChi?`<div class="sdi-canchhi">🐉 Ngày ${dayCanChi(sl.jd)} | ${animal(sl.year)}</div>`:''}`;
+}
+
+function selCal(y,m,d){
+  selDate=new Date(Date.UTC(y,m,d));
+  const old=document.getElementById('mini-cal');
+  if(old){const tmp=document.createElement('div');tmp.innerHTML=buildCal();old.replaceWith(tmp.firstChild);}
+  const sdi=document.getElementById('sdi');
+  if(sdi){sdi.classList.add('show');sdi.innerHTML=getSDI();}
+}
+
+function setTheme(th){
+  S.settings.theme=th;save();applyTheme(th);
+  const btn=document.querySelector('.app-header .btn-icon');
+  if(btn)btn.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.th===th));
+}
+function qToggle(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  setTheme(cur==='dark'?'light':'dark');
+  renderApp();
+}
+function toggleS(k){
+  S.settings[k]=!S.settings[k];save();
+  const tg=document.querySelector(`[onclick="toggleS('${k}')"]`);
+  if(tg)tg.classList.toggle('on',S.settings[k]);
+  if(k==='showDefs'||k==='showCanChi'){
+    const dt=document.getElementById('t-d');if(dt&&activeTab==='dashboard')dt.innerHTML=renderDash();
+    const rt=document.getElementById('t-r');if(rt&&activeTab==='reminders')rt.innerHTML=renderReminders();
+  }
+}
+function setS(k,v){S.settings[k]=v;save();}
+
+function copyLink(){
+  const url=location.href;
+  (navigator.clipboard?.writeText(url)||Promise.reject()).then(()=>toast('✅ Đã copy link!'))
+    .catch(()=>{const i=document.createElement('input');i.value=url;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);toast('✅ Đã copy link!');});
+}
+async function doShare(){
+  if(!navigator.share)return;
+  try{await navigator.share({title:'Lịch Nhà – Lịch Âm Việt Nam',text:'Tra cứu lịch âm dương và ngày lễ Việt Nam',url:location.href});}
+  catch(e){if(e.name!=='AbortError')toast('Không thể chia sẻ');}
+}
+function resetR(){
+  if(!confirm('Xóa tất cả nhắc nhở cá nhân?'))return;
+  S.reminders=DEFS.map(d=>({...d,notify:true}));save();renderApp();toast('✅ Đã khôi phục nhắc nhở mặc định');
+}
+
+// ============================================================
+// TELEGRAM NOTIFICATION
+// ============================================================
+function toggleNotify(id){
+  const r=S.reminders.find(r=>r.id===id);
+  if(!r)return;
+  r.notify=r.notify===false?true:false;
+  save();
+  // Re-render reminder list
+  const rl=document.getElementById('rl');
+  if(rl){
+    let fl=enriched();
+    if(filterCat!=='all')fl=fl.filter(r=>r.cat===filterCat);
+    if(searchQ){const q=searchQ.toLowerCase();fl=fl.filter(r=>r.name.toLowerCase().includes(q)||(r.note||'').toLowerCase().includes(q));}
+    rl.innerHTML=fl.length?fl.map((r,i)=>reminderCard(r,i)).join(''):'';
+  }
+  toast(r.notify?'🔔 Đã bật thông báo':'🔕 Đã tắt thông báo');
+}
+
+function toggleRemindDay(d){
+  let days=S.settings.tgRemindDays||[0,1,3];
+  if(days.includes(d))days=days.filter(x=>x!==d);
+  else days.push(d);
+  days.sort((a,b)=>a-b);
+  S.settings.tgRemindDays=days;
+  save();
+  // Re-render config
+  const ct=document.getElementById('t-c');
+  if(ct)ct.innerHTML=renderConfig();
+}
+
+async function sendTelegram(text){
+  const token=S.settings.tgBotToken;
+  const chatId=S.settings.tgChatId;
+  if(!token||!chatId){toast('⚠️ Vui lòng cấu hình Bot Token và Chat ID');return false;}
+  try{
+    const res=await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,text,parse_mode:'HTML',disable_web_page_preview:true})
+    });
+    const data=await res.json();
+    if(!data.ok){toast('❌ Lỗi: '+(data.description||'Không gửi được'));return false;}
+    return true;
+  }catch(e){
+    toast('❌ Lỗi kết nối: '+e.message);
+    return false;
+  }
+}
+
+async function testTelegram(){
+  const t=todayVN();
+  const lt=lunarToday();
+  const msg=`🏮 <b>Lịch Nhà - Tin nhắn thử</b>\n\n` +
+    `📅 Hôm nay: ${fmtSolar(t)}\n` +
+    `🌙 Âm lịch: ${lt.day}/${lt.month} năm ${canChi(lt.year)}\n\n` +
+    `✅ Kết nối Telegram thành công!\n` +
+    `Bạn sẽ nhận được thông báo khi có sự kiện sắp tới.`;
+  toast('📤 Đang gửi tin nhắn thử...');
+  const ok=await sendTelegram(msg);
+  if(ok)toast('✅ Đã gửi tin nhắn thử thành công!');
+}
+
+async function checkAndSendReminders(){
+  if(!S.settings.tgEnabled){toast('⚠️ Vui lòng bật thông báo Telegram trong Cấu hình');return;}
+  if(!S.settings.tgBotToken||!S.settings.tgChatId){toast('⚠️ Vui lòng cấu hình Bot Token và Chat ID');return;}
+
+  const ev=enriched();
+  const remindDays=S.settings.tgRemindDays||[0,1,3];
+  const toNotify=ev.filter(e=>e.notify!==false && remindDays.includes(e.daysUntil));
+
+  if(toNotify.length===0){toast('📭 Không có sự kiện cần nhắc hôm nay');return;}
+
+  const c_=CATS;
+  let msg=`🏮 <b>Lịch Nhà – Nhắc nhở</b>\n`;
+  msg+=`📅 ${fmtSolar(todayVN())}\n\n`;
+
+  toNotify.forEach(e=>{
+    const c=c_[e.cat]||c_.khac;
+    const du=e.daysUntil;
+    const dLabel=du===0?'📌 <b>HÔM NAY</b>':du===1?'⏰ Ngày mai':`⏳ Còn ${du} ngày`;
+    const nd=e.nextDate?fmtSolar(e.nextDate):'';
+    const nl=e.nextLunar?`${e.nextLunar.day}/${e.nextLunar.month} ÂL`:'';
+    msg+=`${c.icon} <b>${e.name}</b>\n`;
+    msg+=`${dLabel} – ${nd} (${nl})\n`;
+    if(e.note)msg+=`📝 ${e.note}\n`;
+    msg+=`\n`;
+  });
+
+  toast('📤 Đang gửi nhắc nhở...');
+  const ok=await sendTelegram(msg.trim());
+  if(ok)toast(`✅ Đã gửi nhắc nhở ${toNotify.length} sự kiện!`);
+}
+
+// Auto-check reminders on page load (once per day)
+function autoCheckReminders(){
+  if(!S.settings.tgEnabled||!S.settings.tgBotToken||!S.settings.tgChatId)return;
+  const today=fmtSolar(todayVN());
+  const lastCheck=localStorage.getItem('lichNha_lastTgCheck');
+  if(lastCheck===today)return; // Already checked today
+  localStorage.setItem('lichNha_lastTgCheck',today);
+  // Delay to avoid blocking page load
+  setTimeout(()=>checkAndSendReminders(),2000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+applyTheme(S.settings.theme);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.settings.theme==='system')applyTheme('system');});
+renderApp();
+
+// Auto-check Telegram reminders on page load
+autoCheckReminders();
+
+// Lazy-load inactive tabs after initial render
+setTimeout(()=>{
+  const dt=document.getElementById('t-d'),rt=document.getElementById('t-r'),ct=document.getElementById('t-c');
+  if(dt&&!dt.innerHTML.trim())dt.innerHTML=renderDash();
+  if(rt&&!rt.innerHTML.trim())rt.innerHTML=renderReminders();
+  if(ct&&!ct.innerHTML.trim())ct.innerHTML=renderConfig();
+},300);
+
+// Expose globals
+Object.assign(window,{switchTab,openAdd,openEdit,showDetail,closeModal,swCal,tgLeap,tgRepeat,updConv,saveR,delR,doSearch,setFilter,navCal,selCal,setTheme,qToggle,toggleS,setS,copyLink,doShare,resetR,toggleNotify,toggleRemindDay,testTelegram,checkAndSendReminders});
+</script>
+</body>
+</html>
